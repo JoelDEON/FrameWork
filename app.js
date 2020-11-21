@@ -30,10 +30,10 @@ app.post("/", function(req, res) {
     }]
   }
   const jsonData = JSON.stringify(data);
-  const url = "https://us2.api.mailchimp.com/3.0/lists/613b1182fe";
+  const url = "";
   const options = {
     method: "POST",
-    auth: "joel:2a9688d77a9862a838fe7fc100a001cb-us2"
+    auth: ""
   }
   const request = https.request(url, options, function(response) {
     if(response.statusCode === 200){
@@ -56,9 +56,3 @@ app.listen(3000, function() {
   console.log("I am running Boss!");
 });
 
-
-
-//API KEY
-//2a9688d77a9862a838fe7fc100a001cb-us2
-//list id
-//613b1182fe
