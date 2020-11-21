@@ -1,53 +1,57 @@
 const express = require("express");
 const bodyParser = require("body-parser");
-const date = require(__dirname + "/date.js")
+const request = require("request");
+const https = require("https");
+
 const app = express();
-
-let items = ["open the computer", "check the emails", "report the issues"];
-let workItems = [];
-
-app.set('view engine', 'ejs');
-
+app.use(express.static("public"));
 app.use(bodyParser.urlencoded({
   extended: true
 }));
-app.use(express.static("public"));
 
 app.get("/", function(req, res) {
-
-  let day = date.getDates();
-
-  res.render("list", {
-    listTitle: day,
-    newListItems: items
-  });
+  res.sendFile(__dirname + "/signup.html");
 });
-//Add task's---------------------
+
 app.post("/", function(req, res) {
-  const item = req.body.newItem;
-  if (req.body.list === "work") {
-    workItems.push(item);
-    res.redirect("/work");
-  }else{
-    items.push(item);
-    res.redirect("/");
+  const firstName = req.body.FName;
+  const lastName = req.body.LName;
+  const qid = req.body.Qid;
+  const email = req.body.Email;
+  const data = {
+    members: [{
+      email_address: email,
+      status: "subscribed",
+      merge_fields: {
+        FNAME: firstName,
+        LNAME: lastName,
+        QID: qid
+      }
+    }]
   }
+  const jsonData = JSON.stringify(data);
+  const url = "Mailchimp******************id";
+  const options = {
+    method: "POST",
+    auth: "Code *************************Name"
+  }
+  const request = https.request(url, options, function(response) {
+    if(response.statusCode === 200){
+      res.sendFile(__dirname + "/success.html");
+    }
+    else{
+      res.sendFile(__dirname + "/failure.html");
+    }
+    response.on("data", function(data) {
+      console.log(JSON.parse(data));
+    })
+  })
+  request.write(jsonData);
+  request.end();
 });
-
-app.get("/work", function (req, res) {
-  res.render("list", {listTitle:"work list", newListItems: workItems});
+app.post("/failure", function (req, res) {
+  res.redirect("/")
 });
-
-app.post("/work", function (req, res) {
-const item = req.body.newItem;
-workItem.push(item);
-res.redirect("/work");
-});
-
-app.get("/about", function (req, res) {
-res.render("about");
-});
-
 app.listen(3000, function() {
   console.log("I am running Boss!");
 });
